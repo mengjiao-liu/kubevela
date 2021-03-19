@@ -22,6 +22,11 @@ import (
 	"github.com/oam-dev/kubevela/pkg/oam"
 )
 
+const (
+	keyWebhookName     = "webhook name"
+	keyWebhookEndPoint = "webhook end point"
+)
+
 // the default time to check back if we still have work to do
 const rolloutReconcileRequeueTime = 5 * time.Second
 
@@ -213,11 +218,11 @@ func (r *Controller) initializeRollout(ctx context.Context) error {
 			err := callWebhook(ctx, r.parentController, string(v1alpha1.InitializingState), rw)
 			if err != nil {
 				klog.ErrorS(err, "failed to invoke a webhook",
-					"webhook name", rw.Name, "webhook end point", rw.URL)
+					keyWebhookName, rw.Name, keyWebhookEndPoint, rw.URL)
 				r.rolloutStatus.RolloutRetry("failed to invoke a webhook")
 				return err
 			}
-			klog.InfoS("successfully invoked a pre rollout webhook", "webhook name", rw.Name, "webhook end point",
+			klog.InfoS("successfully invoked a pre rollout webhook", keyWebhookName, rw.Name, keyWebhookEndPoint,
 				rw.URL)
 		}
 	}
@@ -234,11 +239,11 @@ func (r *Controller) initializeOneBatch(ctx context.Context) {
 			err := callWebhook(ctx, r.parentController, string(v1alpha1.BatchInitializingState), rh)
 			if err != nil {
 				klog.ErrorS(err, "failed to invoke a webhook",
-					"webhook name", rh.Name, "webhook end point", rh.URL)
+					keyWebhookName, rh.Name, keyWebhookEndPoint, rh.URL)
 				r.rolloutStatus.RolloutRetry("failed to invoke a webhook")
 				return
 			}
-			klog.InfoS("successfully invoked a pre batch webhook", "webhook name", rh.Name, "webhook end point",
+			klog.InfoS("successfully invoked a pre batch webhook", keyWebhookName, rh.Name, keyWebhookEndPoint,
 				rh.URL)
 		}
 	}
@@ -274,11 +279,11 @@ func (r *Controller) finalizeOneBatch(ctx context.Context) {
 			err := callWebhook(ctx, r.parentController, string(v1alpha1.BatchFinalizingState), rh)
 			if err != nil {
 				klog.ErrorS(err, "failed to invoke a webhook",
-					"webhook name", rh.Name, "webhook end point", rh.URL)
+					keyWebhookName, rh.Name, keyWebhookEndPoint, rh.URL)
 				r.rolloutStatus.RolloutRetry("failed to invoke a webhook")
 				return
 			}
-			klog.InfoS("successfully invoked a post batch webhook", "webhook name", rh.Name, "webhook end point",
+			klog.InfoS("successfully invoked a post batch webhook", keyWebhookName, rh.Name, keyWebhookEndPoint,
 				rh.URL)
 		}
 	}
@@ -307,11 +312,11 @@ func (r *Controller) finalizeRollout(ctx context.Context) {
 			err := callWebhook(ctx, r.parentController, string(r.rolloutStatus.RollingState), rw)
 			if err != nil {
 				klog.ErrorS(err, "failed to invoke a webhook",
-					"webhook name", rw.Name, "webhook end point", rw.URL)
+					keyWebhookName, rw.Name, keyWebhookEndPoint, rw.URL)
 				r.rolloutStatus.RolloutRetry("failed to invoke a post rollout webhook")
 				return
 			}
-			klog.InfoS("successfully invoked a post rollout webhook", "webhook name", rw.Name, "webhook end point",
+			klog.InfoS("successfully invoked a post rollout webhook", keyWebhookName, rw.Name, keyWebhookEndPoint,
 				rw.URL)
 		}
 	}
